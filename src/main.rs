@@ -1,6 +1,9 @@
 extern crate regex;
 
 use std::collections::HashMap;
+use std::io::prelude::*;
+use std::io::BufReader;
+use std::fs::File;
 use regex::Regex;
 
 #[derive(Debug)]
@@ -11,7 +14,7 @@ struct TrieNode {
 
 impl TrieNode {
     fn create() -> TrieNode {
-        TrieNode { children: HashMap::new(), is_word: false }
+        TrieNode { children: HashMap::with_capacity(26), is_word: false }
     }
 
     fn add_child(&mut self, chr: char) -> &mut TrieNode {
@@ -56,7 +59,6 @@ impl From<String> for Trie {
                 re.replace_all(word, "")
             })
             // make all lowercase
-            // make all lowercase
             .map(|word| word.chars()
                 .map(|char| char.to_lowercase().last().unwrap())
                 .fold(String::new(), |mut s, c| {
@@ -68,18 +70,33 @@ impl From<String> for Trie {
     }
 }
 
+impl From<File> for Trie {
+    fn from(file: File) -> Self {
+        let mut trie = Trie::create();
+        let reader = BufReader::new(file);
+        let mut num_words = 0;
+        reader.lines()
+            .for_each(|word| {
+                num_words += 1;
+                trie.add_word(word.unwrap())
+            });
+        println!("{} words", num_words);
+        trie
+    }
+}
+
 fn main() {
-    let string = String::from(
-        "This is the most coolest thing ever. very every."
-    );
-    println!("Input string: {}", string);
-    let mut string_words: Trie = Trie::from(string);
-//    println!("{:?}", string_words);
+    let f = File::open("words_alpha.txt").expect("File not found");
+    let mut dict = Trie::from(f);
+//    println!("{:?}", dict);
     let test_words = [
-        "this", "This", "coolest", "coolestest", "every.", "every",
+        "asdf", "yay", "coolest", "hotdog",
+        "pneumonia", "abracadabra",
+        "superabominableness",
+        "antidisestablishmentarianism",
     ];
     test_words.iter()
         .for_each(|word| {
-            println!("Contains {}: {}", word, string_words.contains(word));
+            println!("Contains {}: {}", word, dict.contains(word));
         });
 }
