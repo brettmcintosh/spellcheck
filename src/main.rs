@@ -56,6 +56,7 @@ impl From<String> for Trie {
                 re.replace_all(word, "")
             })
             // make all lowercase
+            // make all lowercase
             .map(|word| word.chars()
                 .map(|char| char.to_lowercase().last().unwrap())
                 .fold(String::new(), |mut s, c| {
