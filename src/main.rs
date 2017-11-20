@@ -32,12 +32,25 @@ impl Trie {
             .fold(&mut self.root, |node, char| node.add_child(char)); // wow
         last.is_word = true;
     }
+
+    fn contains(&mut self, word: &str) -> bool {
+        match word.chars().fold( Some(&self.root), |maybe_node, char| {
+            match maybe_node {
+                Some(v) => maybe_node.and(v.children.get(&char)),
+                None => None,
+            }
+        }) {
+            Some(v) => v.is_word,
+            None => false
+        }
+    }
 }
 
 impl From<String> for Trie {
     fn from(string: String) -> Self {
         let mut trie = Trie::create();
         string.split_whitespace()
+            // make all lowercase
             .map(|word| word.chars()
                 .map(|char| char.to_lowercase().last().unwrap())
                 .fold(String::new(), |mut s, c| {
@@ -45,7 +58,7 @@ impl From<String> for Trie {
                     s
                 }))
             .for_each(|word| {
-                println!("{:?}", word);
+//                println!("{:?}", word);
                 trie.add_word(word)
             });
         trie
@@ -53,7 +66,14 @@ impl From<String> for Trie {
 }
 
 fn main() {
-    let trie: Trie = Trie::from(
-        String::from("This is the most coolest thing ever very every"));
-    println!("{:?}", trie);
+    let string = String::from(
+        "This is the most coolest thing ever very every"
+    );
+    println!("Input string: {}", string);
+    let mut trie: Trie = Trie::from(string);
+//    println!("{:?}", trie);
+    let contains_word = trie.contains("coolest");
+    println!("Contains coolest: {}", contains_word);
+    let contains_word = trie.contains("coolestest");
+    println!("Contains coolestest: {}", contains_word);
 }
