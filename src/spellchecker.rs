@@ -39,9 +39,9 @@ impl SpellChecker {
     }
 
     pub fn get_recommendations(&self, word: &str, max_num: usize) -> Vec<String> {
-        let mut all_recs: Vec<String> = (word.len()-2..word.len()+1)
+        let mut all_recs: Vec<String> = (1..word.len()+1)
             .rev()
-            // get prefixes of len, len-1 and len-2
+            // get all prefixes
             .map(|num| {
                 String::from(word.get(0..num).unwrap())
             })

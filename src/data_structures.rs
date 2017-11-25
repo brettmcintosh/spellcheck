@@ -54,7 +54,7 @@ impl Trie {
                     })
                     .flat_map(|v| v)
                     .collect();
-                more_words.sort();
+                more_words.sort_by_key(|word| word.len());
                 words.extend(more_words.iter().cloned());
             },
             None => ()
@@ -79,7 +79,6 @@ impl From<File> for Trie {
                 num_words += 1;
                 trie.add_word(&word.unwrap())
             });
-        println!("{} words in dict", num_words);
         trie
     }
 }
