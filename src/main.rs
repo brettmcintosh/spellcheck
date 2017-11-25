@@ -51,7 +51,7 @@ impl Trie {
                 if v.is_word {
                     words.push(prefix.clone());
                 }
-                let more_words: Vec<String> = v.children.keys()
+                let mut more_words: Vec<String> = v.children.keys()
                     .map(|char| {
                         let mut child_prefix = String::from(prefix.as_ref());
                         child_prefix.push(char.clone());
@@ -59,6 +59,7 @@ impl Trie {
                     })
                     .flat_map(|v| v)
                     .collect();
+                more_words.sort();
                 words.extend(more_words.iter().cloned());
             },
             None => ()
@@ -68,10 +69,7 @@ impl Trie {
 
     fn _get_prefix_node(&self, prefix: &str) -> Option<&TrieNode> {
         prefix.chars().fold(Some(&self.root), |maybe_node, char| {
-            match maybe_node {
-                Some(v) => maybe_node.and(v.children.get(&char)),
-                None => None,
-            }
+            maybe_node?.children.get(&char)  // neat
         })
     }
 }
