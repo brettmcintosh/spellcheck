@@ -4,6 +4,8 @@ use std::io::{self, Read};
 use trie::spellchecker::SpellChecker;
 
 fn main() {
+    // try running with:
+    // echo "zzzzzzzzzzzzz ikini ultimat cron matini martinii markek" | cargo run
     let mut spell_checker = SpellChecker::new();
     let mut buffer = String::new();
     let _ = io::stdin().read_to_string(&mut buffer);
